@@ -14,10 +14,14 @@ class MainActivity : AppCompatActivity() {
     private val binding get() = mBinding!!
 
     init {
-        //System.loadLibrary("HelloJni")
         System.loadLibrary("native-lib")
     }
+
+    // JNI String print test 함수
     private external fun stringFromJNI(): String
+
+    //UNIX Donmain Socket 통신으로 trayctl제어 명령어를 Server로 송신하는 함수
+    private external fun unixSocketClient(module:String, action:String, param1:String, param2:String): String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,8 +31,10 @@ class MainActivity : AppCompatActivity() {
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.jnitext.setText(stringFromJNI());
+        binding.jnitext.setText(stringFromJNI())
 
         Log.d("JNI String 호출", stringFromJNI())
+
+        unixSocketClient("tray","move","1","",)
     }
 }
