@@ -13,16 +13,6 @@ class MainActivity : AppCompatActivity() {
     // 매번 null체크를 할 필요없이 편의성을 위해 바인딩 변수 재 선언
     private val binding get() = mBinding!!
 
-    init {
-        System.loadLibrary("native-lib")
-    }
-
-    // JNI String print test 함수
-    private external fun stringFromJNI(): String
-
-    //UNIX Donmain Socket 통신으로 trayctl제어 명령어를 Server로 송신하는 함수
-    private external fun unixSocketClient(module:String, action:String, param1:String, param2:String): String
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -31,10 +21,12 @@ class MainActivity : AppCompatActivity() {
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.jnitext.setText(stringFromJNI())
+        val jniHelper = JNIHelper.getInstance()
 
-        Log.d("JNI String 호출", stringFromJNI())
+        Log.d("JNI String 호출", jniHelper.stringFromJNI())
+        binding.jnitext.text = jniHelper.stringFromJNI()
 
-        unixSocketClient("tray","move","1","",)
+        jniHelper.unixSocketClient("tray", "move","5", "")
+        jniHelper.unixSocketClient("medicine", "move","out", "current")
     }
 }

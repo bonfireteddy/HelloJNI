@@ -9,7 +9,6 @@
 #include <sys/un.h> // 소켓 통신 및 파일 관련 함수와 타입
 #include <android/log.h> // android log출력을 위한 함수
 
-
 #define MAXLINE 1024 // 한 번에 송수신할 데이터의 최대 크기를 정의
 #define SOCK_NAME "/data/trayctl/trayctl.sock" // 소켓 파일 경로
 #define LOG_TAG "UNIXSocketClient" // 로그 태그
@@ -17,14 +16,14 @@
 
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_com_example_hellojni_MainActivity_stringFromJNI(JNIEnv *env, jobject thiz) {
+Java_com_example_hellojni_JNIHelper_stringFromJNI(JNIEnv *env, jobject thiz) {
     std::string hello = "Hello from C++";
     return env->NewStringUTF(hello.c_str());
 }
 
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_com_example_hellojni_MainActivity_unixSocketClient(JNIEnv *env, jobject thiz, jstring jmodule, jstring jaction, jstring jparam1, jstring jparam2){
+Java_com_example_hellojni_JNIHelper_unixSocketClient(JNIEnv *env, jobject thiz, jstring jmodule, jstring jaction, jstring jparam1, jstring jparam2){
 
     int client_len; // 소켓 주소 구조체의 길이를 저장
     int client_sockfd; // 클라이언트 소켓 파일 디스크립터
@@ -73,7 +72,7 @@ Java_com_example_hellojni_MainActivity_unixSocketClient(JNIEnv *env, jobject thi
     // 메시지 생성 및 전송 - JSON 형식의 요청 메시지를 생성
     snprintf(buf_send, sizeof(buf_send),
              "{\"type\":\"request\",\"module\":\"%s\",\"data\":{\"cmd\":\"%s\",\"sub_cmd1\":\"%s\",\"sub_cmd2\":\"%s\"}}",
-            module, action, param1 ? param1 : "none", param2 ? param2 : "none");
+             module, action, param1 ? param1 : "none", param2 ? param2 : "none");
 
     LOGD("[tool] Send IPC Data-> %s", buf_send); // 생성된 메시지를 출력
     write(client_sockfd, buf_send, strlen(buf_send)); // 메시지를 서버로 전송
@@ -95,7 +94,6 @@ Java_com_example_hellojni_MainActivity_unixSocketClient(JNIEnv *env, jobject thi
     // 네이티브 함수의 결과를 Java 문자열(jstring)로 변환하여 반환
     return env->NewStringUTF(buf_recv);
 }
-
 
 
 
